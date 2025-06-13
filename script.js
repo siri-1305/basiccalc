@@ -1,7 +1,8 @@
 const display = document.getElementById("display");
+const historyList = document.getElementById("historyList");
 
-function appendValue(value) {
-  display.value += value;
+function appendValue(val) {
+  display.value += val;
 }
 
 function clearDisplay() {
@@ -14,21 +15,34 @@ function deleteLast() {
 
 function calculate() {
   try {
-    display.value = eval(display.value) || "";
+    const input = display.value;
+    const result = eval(input);
+    if (input && !isNaN(result)) {
+      display.value = result;
+      addToHistory(input + " = " + result);
+    }
   } catch {
     display.value = "Error";
   }
+}
+
+function addToHistory(entry) {
+  const li = document.createElement("li");
+  li.textContent = entry;
+  historyList.prepend(li);
 }
 
 function toggleTheme() {
   document.body.classList.toggle("dark");
 }
 
-// 🧠 Allow keyboard input
-document.addEventListener("keydown", function (e) {
-  if ("0123456789+-*/.".includes(e.key)) {
+// Keyboard support
+document.addEventListener("keydown", (e) => {
+  const allowedKeys = "0123456789+-*/.";
+  if (allowedKeys.includes(e.key)) {
     appendValue(e.key);
   } else if (e.key === "Enter") {
+    e.preventDefault();
     calculate();
   } else if (e.key === "Backspace") {
     deleteLast();
@@ -36,4 +50,5 @@ document.addEventListener("keydown", function (e) {
     clearDisplay();
   }
 });
+
 
